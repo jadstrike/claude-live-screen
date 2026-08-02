@@ -92,7 +92,8 @@
       }
     },
     "dmg": {
-      "title": "Claude Live Screen ${version}"
+      "title": "Claude Live Screen ${version} ${arch}",
+      "writeUpdateInfo": false
     },
     "win": {
       "icon": "build/icon.png",
