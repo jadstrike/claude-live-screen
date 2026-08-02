@@ -7,7 +7,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Needed so electron-builder can create/upload the GitHub Release assets.
 permissions:
   contents: write
 
@@ -19,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - run: npm ci
       - name: Check all sources parse
         run: |
@@ -49,26 +48,54 @@ jobs:
         include:
           - os: macos-latest
             name: macOS (.dmg)
+            artifacts: dist/*.dmg
           - os: windows-latest
             name: Windows (.exe)
+            artifacts: dist/*.exe
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
 
-      # On a tag, publish straight to the GitHub Release. Otherwise just build.
+      # Never publish from inside the matrix: two runners racing to create the
+      # same GitHub Release produces two competing drafts. The release job
+      # below collects everything and publishes exactly once.
       - name: Build installer
-        run: npx electron-builder --publish ${{ startsWith(github.ref, 'refs/tags/v') && 'always' || 'never' }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --publish never
 
       - uses: actions/upload-artifact@v4
         with:
           name: installer-${{ runner.os }}
-          path: |
-            dist/*.dmg
-            dist/*.exe
+          path: ${{ matrix.artifacts }}
           if-no-files-found: error
+
+  release:
+    name: Publish release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List collected installers
+        run: ls -lh artifacts
+
+      - name: Publish to the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            artifacts/* \
+          || gh release upload "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --clobber \
+            artifacts/*

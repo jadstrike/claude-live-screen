@@ -138,7 +138,15 @@ npm run dist:win   # .exe NSIS installer (x64)
 npm run dist:mac   # .dmg (arm64 + x64)
 ```
 
-Output lands in `dist/`. **Each installer must be built on its own OS** — macOS `.dmg` requires a Mac, and Windows `.exe` requires Windows (or Wine). That's why releases are produced by GitHub Actions (`.github/workflows/build.yml`), which builds both on real runners and attaches them to the release automatically when a `v*` tag is pushed:
+Output lands in `dist/`. **Each installer must be built on its own OS**: run `dist:win` on Windows and `dist:mac` on macOS.
+
+> **Building for the wrong OS fails by design.** On Linux or WSL, `npm run dist:win` stops with:
+> ```
+> ⨯ wine is required, please see https://electron.build/multi-platform-build#linux
+> ```
+> That's expected — electron-builder shells out to Wine to stamp the icon and metadata into the Windows binary. `npm run dist:mac` can't work off a Mac at all, since Apple's tooling is macOS-only. **You don't need to solve this**: CI already builds both on real runners. Just push a tag (below) and download the results.
+
+Releases are produced by GitHub Actions (`.github/workflows/build.yml`), which builds on real macOS and Windows runners, then publishes both installers to the release in a single step when a `v*` tag is pushed:
 
 ```bash
 npm version patch      # or minor / major — creates the commit and tag
