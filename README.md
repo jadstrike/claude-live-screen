@@ -8,30 +8,11 @@ An open-source desktop assistant for **Windows and macOS** that lets Claude watc
 - ⚡ **Built for speed** — streaming responses, a "Fast" mode (minimal thinking + low effort), downscaled JPEG frames, prompt caching, and frame de-duplication.
 - 🙈 **Doesn't see itself** — the app's own windows are excluded from capture, so no feedback loops.
 - 🔴 **Hard off-switch, off by default** — Claude sees nothing until you flip the switch. No background capture, no surprise API bills.
-- 🧩 **Claude Code skill included** — already pay for a Claude subscription? Skip the API key entirely and use `/claude-screen` inside Claude Code.
+- 🧩 **Companion Claude Code skill** — already pay for a Claude subscription? Skip the API key entirely with [`/claude-screen`](https://github.com/jadstrike/claude-screen-skill).
 
 ## Install
 
-### Option 1 — npm (recommended, no security warnings)
-
-If you have [Node.js](https://nodejs.org) 18+:
-
-```bash
-npx claude-live-screen
-```
-
-That's it — no installer, no OS warning to click through. Add `-g` to keep it around:
-
-```bash
-npm install -g claude-live-screen
-claude-live-screen
-```
-
-**Why this path has no warnings:** macOS only quarantines files downloaded by a *browser*, and the Electron runtime that npm fetches is already signed and notarised by the Electron project. So Gatekeeper and SmartScreen never engage.
-
-### Option 2 — download an installer
-
-From the [**latest release**](https://github.com/jadstrike/claude-live-screen/releases/latest):
+**Download the installer** from the [**latest release**](https://github.com/jadstrike/claude-live-screen/releases/latest), then run it:
 
 | Platform | File |
 |---|---|
@@ -39,13 +20,37 @@ From the [**latest release**](https://github.com/jadstrike/claude-live-screen/re
 | macOS (Apple Silicon) | `Claude-Live-Screen-<version>-mac-arm64.dmg` |
 | macOS (Intel) | `Claude-Live-Screen-<version>-mac-x64.dmg` |
 
-> **These builds are unsigned**, because code-signing certificates cost more than this project earns. Each OS warns once on first launch:
+> **These builds are unsigned**, because code-signing certificates cost more than this project earns. Each OS warns once on first launch — this is expected:
 > - **Windows** — SmartScreen "Windows protected your PC" → **More info → Run anyway**
 > - **macOS** — "developer cannot be verified" → **right-click the app → Open**, or `xattr -cr "/Applications/Claude Live Screen.app"`
->
-> Use option 1 or build from source to avoid this entirely.
 
-Either way you'll need an [Anthropic API key](https://platform.claude.com/). To use a Claude subscription you already pay for instead, see the [Claude Code skill](https://github.com/jadstrike/claude-screen-skill).
+You'll need an [Anthropic API key](https://platform.claude.com/). To use a Claude subscription you already pay for instead, see the [Claude Code skill](https://github.com/jadstrike/claude-screen-skill).
+
+<details>
+<summary><b>Alternative: run from source</b> (no security warning)</summary>
+
+Requires [Node.js](https://nodejs.org) 18+. Avoids the unsigned-build warning entirely, because the Electron runtime npm downloads is already signed and notarised upstream.
+
+```bash
+git clone https://github.com/jadstrike/claude-live-screen.git
+cd claude-live-screen
+npm install
+npm start
+```
+
+</details>
+
+> ⚠️ **This app cannot run inside WSL.** WSL has no Windows desktop to draw on, and would capture the Linux desktop rather than your real screen. Install it on Windows or macOS directly.
+
+## First run
+
+1. Launch **Claude Live Screen**.
+2. Open **Settings**, paste your Anthropic API key, click **Save**.
+3. Flip **AI screen vision** to **ON** (or press `Ctrl/Cmd+Shift+S`). It is off every launch by design.
+4. Click **Start watching** — Claude checks your screen every few seconds and speaks up when something matters. Or type a question and press **Ask**.
+5. Press `Ctrl/Cmd+Shift+S` again to switch vision off when you're done.
+
+On macOS, the first capture asks for **Screen Recording** permission. Grant it in System Settings → Privacy & Security → Screen Recording, then restart the app.
 
 ## The master switch
 
@@ -82,35 +87,13 @@ It runs on the Claude subscription you already pay for, works on macOS/Windows/L
 | Speed | A few seconds per frame | Sub-second streaming |
 | Best for | Occasional "look at this" | Continuous over-the-shoulder help |
 
-## Quick start
-
-Requirements: [Node.js](https://nodejs.org) 20+ and an [Anthropic API key](https://platform.claude.com/).
-
-```bash
-git clone https://github.com/<you>/claude-live-screen.git
-cd claude-live-screen
-npm install
-npm start
-```
-
-Then:
-
-1. Open **Settings** in the app window and paste your Anthropic API key (stored encrypted via the OS keychain when available). If you skip this, the app falls back to the `ANTHROPIC_API_KEY` environment variable or an `ant auth login` profile.
-2. Flip **AI screen vision** to ON (or press `Ctrl/Cmd+Shift+S`). It starts off every launch — while off, nothing is captured or sent.
-3. Click **Start watching** — Claude begins checking your screen every few seconds and speaks up when something looks worth mentioning.
-4. Or type a question in the box ("why is this build failing?", "what does this dialog mean?") and hit **Ask**.
-
-### Hotkeys
+## Hotkeys
 
 | Shortcut | Action |
 |---|---|
 | `Ctrl/Cmd+Shift+S` | Turn screen vision on / off (master switch) |
 | `Ctrl/Cmd+Shift+A` | Analyze the screen right now |
 | `Ctrl/Cmd+Shift+O` | Show / hide the overlay |
-
-### macOS: Screen Recording permission
-
-The first capture triggers macOS's Screen Recording permission prompt. Grant it under **System Settings → Privacy & Security → Screen Recording**, then restart the app. The app shows a banner with a shortcut button if permission is missing.
 
 ## Settings
 
