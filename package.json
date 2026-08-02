@@ -1,0 +1,51 @@
+{
+  "name": "claude-live-screen",
+  "productName": "Claude Live Screen",
+  "version": "0.1.0",
+  "description": "Open-source Windows/macOS assistant that lets Claude watch your screen and give live, real-time advice about what's on it.",
+  "main": "src/main.js",
+  "license": "MIT",
+  "author": "Khant Zwe Naing (Issac)",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0"
+  },
+  "devDependencies": {
+    "electron": "^37.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "io.github.issaciscoding.claude-live-screen",
+    "productName": "Claude Live Screen",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64", "x64"]
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false
+    }
+  }
+}

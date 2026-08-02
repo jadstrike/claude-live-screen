@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'" />
+  <title>Claude Overlay</title>
+  <link rel="stylesheet" href="overlay.css" />
+</head>
+<body>
+  <div id="overlay-card">
+    <div id="overlay-bar">
+      <span id="overlay-dot" class="dot"></span>
+      <span id="overlay-title">Claude</span>
+      <button id="btn-power" title="Toggle screen vision (Ctrl/Cmd+Shift+S)">⏻</button>
+      <button id="btn-ghost" title="Click-through mode (mouse passes through)">👻</button>
+      <button id="btn-hide" title="Hide overlay (Ctrl/Cmd+Shift+O to show)">✕</button>
+    </div>
+    <div id="overlay-content">Waiting for the first screen check…</div>
+  </div>
+  <script src="overlay.js"></script>
+</body>
+</html>

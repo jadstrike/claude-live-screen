@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'" />
+  <title>Claude Live Screen</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="title-row">
+      <h1>Claude Live Screen</h1>
+      <span id="status-dot" class="dot idle" title="Idle"></span>
+      <span id="status-label">Idle</span>
+    </div>
+    <label class="vision-toggle" title="Master switch — while off, nothing is captured or sent (no API cost)">
+      <input id="vision-switch" type="checkbox" />
+      <span class="switch"></span>
+      <span id="vision-label">AI screen vision: OFF</span>
+    </label>
+    <div class="actions">
+      <button id="btn-watch" class="primary">Start watching</button>
+      <button id="btn-analyze">Analyze now</button>
+      <button id="btn-clear">Clear chat</button>
+    </div>
+    <p class="hint">
+      Hotkeys: <kbd>Ctrl/Cmd+Shift+S</kbd> vision on/off · <kbd>Ctrl/Cmd+Shift+A</kbd> analyze now ·
+      <kbd>Ctrl/Cmd+Shift+O</kbd> toggle overlay
+    </p>
+  </header>
+
+  <div id="permission-banner" class="banner hidden">
+    macOS Screen Recording permission is required.
+    <button id="btn-open-permission">Open System Settings</button>
+  </div>
+
+  <details id="settings-panel">
+    <summary>Settings</summary>
+    <div class="settings-grid">
+      <label for="api-key">Anthropic API key</label>
+      <div class="row">
+        <input id="api-key" type="password" placeholder="sk-ant-..." autocomplete="off" />
+        <button id="btn-save-key">Save</button>
+      </div>
+      <span id="api-key-status" class="hint"></span>
+
+      <label for="model">Model</label>
+      <select id="model">
+        <option value="claude-opus-5">Claude Opus 5 (best quality)</option>
+        <option value="claude-sonnet-5">Claude Sonnet 5 (balanced)</option>
+        <option value="claude-haiku-4-5">Claude Haiku 4.5 (lowest latency)</option>
+      </select>
+
+      <label for="response-mode">Response mode</label>
+      <select id="response-mode">
+        <option value="fast">Fast (real-time, minimal thinking)</option>
+        <option value="thorough">Thorough (deeper reasoning, slower)</option>
+      </select>
+
+      <label for="interval">Capture interval (seconds)</label>
+      <input id="interval" type="number" min="1" max="60" step="0.5" />
+
+      <label for="only-on-change" class="inline">
+        <input id="only-on-change" type="checkbox" />
+        Only send when the screen changes
+      </label>
+
+      <label for="display">Display to watch</label>
+      <select id="display"></select>
+
+      <label for="auto-prompt">Auto-watch instruction</label>
+      <textarea id="auto-prompt" rows="3"></textarea>
+
+      <button id="btn-save-settings" class="primary">Save settings</button>
+      <span id="settings-status" class="hint"></span>
+    </div>
+  </details>
+
+  <main id="feed" aria-live="polite"></main>
+
+  <footer>
+    <form id="ask-form">
+      <input
+        id="ask-input"
+        type="text"
+        placeholder="Ask about what's on your screen…"
+        autocomplete="off"
+      />
+      <button type="submit" class="primary">Ask</button>
+    </form>
+    <div id="usage" class="hint"></div>
+  </footer>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
