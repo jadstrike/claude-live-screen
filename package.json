@@ -112,7 +112,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Claude Live Screen"
+      "shortcutName": "Claude Live Screen",
+      "include": "build/installer.nsh"
     },
     "linux": {
       "icon": "build/icon.png",
