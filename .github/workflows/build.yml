@@ -3,10 +3,13 @@ name: Build
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
-  release:
-    types: [published]
+
+# Needed so electron-builder can create/upload the GitHub Release assets.
+permissions:
+  contents: write
 
 jobs:
   check:
@@ -20,34 +23,52 @@ jobs:
       - run: npm ci
       - name: Check all sources parse
         run: |
-          for f in src/main.js src/preload.js src/renderer/*.js; do
+          for f in src/main.js src/preload.js src/renderer/*.js build/make-icon.js; do
             node --check "$f"
           done
+      - name: Icon generator produces a valid 1024x1024 PNG
+        run: |
+          npm run icon
+          node -e "
+            const b = require('fs').readFileSync('build/icon.png');
+            if (b.subarray(0,8).toString('hex') !== '89504e470d0a1a0a') throw new Error('not a PNG');
+            const w = b.readUInt32BE(16), h = b.readUInt32BE(20);
+            if (w !== 1024 || h !== 1024) throw new Error('unexpected size ' + w + 'x' + h);
+            console.log('icon OK', w + 'x' + h, b.length + ' bytes');
+          "
 
   build:
-    name: Build ${{ matrix.os }}
+    name: ${{ matrix.name }}
     needs: check
-    # Installers are only worth building for a release or a manual run.
-    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    # Installers take minutes to build, so only on a tag or a manual run.
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest]
+        include:
+          - os: macos-latest
+            name: macOS (.dmg)
+          - os: windows-latest
+            name: Windows (.exe)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
       - run: npm ci
+
+      # On a tag, publish straight to the GitHub Release. Otherwise just build.
       - name: Build installer
-        run: npx electron-builder --publish never
+        run: npx electron-builder --publish ${{ startsWith(github.ref, 'refs/tags/v') && 'always' || 'never' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/upload-artifact@v4
         with:
-          name: installer-${{ matrix.os }}
+          name: installer-${{ runner.os }}
           path: |
             dist/*.dmg
             dist/*.exe
-          if-no-files-found: warn
+          if-no-files-found: error

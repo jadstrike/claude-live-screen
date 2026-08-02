@@ -8,6 +8,7 @@
   "author": "Khant Zwe Naing (Issac)",
   "scripts": {
     "start": "electron .",
+    "icon": "node build/make-icon.js",
     "dist": "electron-builder",
     "dist:mac": "electron-builder --mac",
     "dist:win": "electron-builder --win"
@@ -20,22 +21,45 @@
     "electron-builder": "^25.1.8"
   },
   "build": {
-    "appId": "io.github.issaciscoding.claude-live-screen",
+    "appId": "io.github.jadstrike.claude-live-screen",
     "productName": "Claude Live Screen",
+    "copyright": "Copyright © 2026 Khant Zwe Naing",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
     "files": [
       "src/**/*",
       "package.json"
     ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "jadstrike",
+        "repo": "claude-live-screen"
+      }
+    ],
     "mac": {
       "category": "public.app-category.productivity",
+      "icon": "build/icon.png",
+      "artifactName": "Claude-Live-Screen-${version}-mac-${arch}.${ext}",
       "target": [
         {
           "target": "dmg",
           "arch": ["arm64", "x64"]
         }
-      ]
+      ],
+      "identity": null,
+      "extendInfo": {
+        "NSScreenCaptureUsageDescription": "Claude Live Screen captures your screen only while you switch screen vision on, so Claude can give advice about what you are looking at."
+      }
+    },
+    "dmg": {
+      "title": "Claude Live Screen ${version}"
     },
     "win": {
+      "icon": "build/icon.png",
+      "artifactName": "Claude-Live-Screen-Setup-${version}-${arch}.${ext}",
       "target": [
         {
           "target": "nsis",
@@ -44,8 +68,18 @@
       ]
     },
     "nsis": {
-      "oneClick": true,
-      "perMachine": false
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Claude Live Screen"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "category": "Utility",
+      "artifactName": "Claude-Live-Screen-${version}-linux-${arch}.${ext}",
+      "target": ["AppImage"]
     }
   }
 }

@@ -10,6 +10,24 @@ An open-source desktop assistant for **Windows and macOS** that lets Claude watc
 - 🔴 **Hard off-switch, off by default** — Claude sees nothing until you flip the switch. No background capture, no surprise API bills.
 - 🧩 **Claude Code skill included** — already pay for a Claude subscription? Skip the API key entirely and use `/claude-screen` inside Claude Code.
 
+## Download
+
+Grab a ready-to-run installer from the [**latest release**](https://github.com/jadstrike/claude-live-screen/releases/latest):
+
+| Platform | File |
+|---|---|
+| Windows 10/11 (x64) | `Claude-Live-Screen-Setup-<version>-x64.exe` |
+| macOS (Apple Silicon) | `Claude-Live-Screen-<version>-mac-arm64.dmg` |
+| macOS (Intel) | `Claude-Live-Screen-<version>-mac-x64.dmg` |
+
+You'll need an [Anthropic API key](https://platform.claude.com/) to use the app. Prefer to use a Claude subscription you already pay for instead? Use the [Claude Code skill](https://github.com/jadstrike/claude-screen-skill).
+
+> **The builds are unsigned**, because code-signing certificates cost more than this project earns. Both OSes will warn you on first launch:
+> - **Windows** — SmartScreen shows "Windows protected your PC". Click **More info → Run anyway**.
+> - **macOS** — "cannot be opened because the developer cannot be verified". **Right-click the app → Open**, then confirm; or run `xattr -cr "/Applications/Claude Live Screen.app"`.
+>
+> Building from source (below) avoids the warnings entirely.
+
 ## The master switch
 
 Both the app and the skill ship with a single idea at the centre: **Claude can only see your screen while you have explicitly turned vision on.**
@@ -112,14 +130,22 @@ The first capture triggers macOS's Screen Recording permission prompt. Grant it 
 - Nothing is stored server-side by this app; screenshots exist only in memory for the duration of a request.
 - Each auto-check is one vision API request. At the default 3-second interval with change detection, a busy screen can generate ~10–20 requests/minute. Watch the token counter in the footer, lengthen the interval, or switch to Haiku 4.5 to reduce cost.
 
-## Building installers
+## Building installers yourself
 
 ```bash
+npm run icon       # regenerate build/icon.png (pure Node, no image tools needed)
+npm run dist:win   # .exe NSIS installer (x64)
 npm run dist:mac   # .dmg (arm64 + x64)
-npm run dist:win   # NSIS installer (x64)
 ```
 
-Note: macOS builds must be made on macOS; unsigned builds will show Gatekeeper warnings until you configure code signing/notarization in `package.json` (`build.mac`).
+Output lands in `dist/`. **Each installer must be built on its own OS** — macOS `.dmg` requires a Mac, and Windows `.exe` requires Windows (or Wine). That's why releases are produced by GitHub Actions (`.github/workflows/build.yml`), which builds both on real runners and attaches them to the release automatically when a `v*` tag is pushed:
+
+```bash
+npm version patch      # or minor / major — creates the commit and tag
+git push --follow-tags # CI builds both installers and publishes the release
+```
+
+To produce signed, warning-free builds, add your certificates as repository secrets and configure `build.mac` / `build.win` in `package.json`.
 
 ## Development notes & limitations
 
