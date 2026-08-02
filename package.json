@@ -4,8 +4,38 @@
   "version": "0.1.0",
   "description": "Open-source Windows/macOS assistant that lets Claude watch your screen and give live, real-time advice about what's on it.",
   "main": "src/main.js",
+  "bin": {
+    "claude-live-screen": "bin/cli.js"
+  },
   "license": "MIT",
   "author": "Khant Zwe Naing (Issac)",
+  "homepage": "https://github.com/jadstrike/claude-live-screen#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jadstrike/claude-live-screen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jadstrike/claude-live-screen/issues"
+  },
+  "keywords": [
+    "claude",
+    "anthropic",
+    "screen-capture",
+    "ai-assistant",
+    "electron",
+    "screenshot",
+    "developer-tools"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "build/icon.png",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "start": "electron .",
     "icon": "node build/make-icon.js",
@@ -17,7 +47,6 @@
     "@anthropic-ai/sdk": "^0.110.0"
   },
   "devDependencies": {
-    "electron": "^37.0.0",
     "electron-builder": "^25.1.8"
   },
   "build": {
@@ -30,8 +59,13 @@
     },
     "files": [
       "src/**/*",
-      "package.json"
+      "package.json",
+      "!bin/**/*",
+      "!build/**/*",
+      "!node_modules/electron/**/*",
+      "!node_modules/electron-builder/**/*"
     ],
+    "electronVersion": "37.10.3",
     "publish": [
       {
         "provider": "github",
@@ -46,7 +80,10 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["arm64", "x64"]
+          "arch": [
+            "arm64",
+            "x64"
+          ]
         }
       ],
       "identity": null,
@@ -63,7 +100,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },
@@ -79,7 +118,12 @@
       "icon": "build/icon.png",
       "category": "Utility",
       "artifactName": "Claude-Live-Screen-${version}-linux-${arch}.${ext}",
-      "target": ["AppImage"]
+      "target": [
+        "AppImage"
+      ]
     }
+  },
+  "optionalDependencies": {
+    "electron": "^37.0.0"
   }
 }

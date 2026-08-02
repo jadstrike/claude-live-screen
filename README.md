@@ -10,9 +10,28 @@ An open-source desktop assistant for **Windows and macOS** that lets Claude watc
 - 🔴 **Hard off-switch, off by default** — Claude sees nothing until you flip the switch. No background capture, no surprise API bills.
 - 🧩 **Claude Code skill included** — already pay for a Claude subscription? Skip the API key entirely and use `/claude-screen` inside Claude Code.
 
-## Download
+## Install
 
-Grab a ready-to-run installer from the [**latest release**](https://github.com/jadstrike/claude-live-screen/releases/latest):
+### Option 1 — npm (recommended, no security warnings)
+
+If you have [Node.js](https://nodejs.org) 18+:
+
+```bash
+npx claude-live-screen
+```
+
+That's it — no installer, no OS warning to click through. Add `-g` to keep it around:
+
+```bash
+npm install -g claude-live-screen
+claude-live-screen
+```
+
+**Why this path has no warnings:** macOS only quarantines files downloaded by a *browser*, and the Electron runtime that npm fetches is already signed and notarised by the Electron project. So Gatekeeper and SmartScreen never engage.
+
+### Option 2 — download an installer
+
+From the [**latest release**](https://github.com/jadstrike/claude-live-screen/releases/latest):
 
 | Platform | File |
 |---|---|
@@ -20,13 +39,13 @@ Grab a ready-to-run installer from the [**latest release**](https://github.com/j
 | macOS (Apple Silicon) | `Claude-Live-Screen-<version>-mac-arm64.dmg` |
 | macOS (Intel) | `Claude-Live-Screen-<version>-mac-x64.dmg` |
 
-You'll need an [Anthropic API key](https://platform.claude.com/) to use the app. Prefer to use a Claude subscription you already pay for instead? Use the [Claude Code skill](https://github.com/jadstrike/claude-screen-skill).
-
-> **The builds are unsigned**, because code-signing certificates cost more than this project earns. Both OSes will warn you on first launch:
-> - **Windows** — SmartScreen shows "Windows protected your PC". Click **More info → Run anyway**.
-> - **macOS** — "cannot be opened because the developer cannot be verified". **Right-click the app → Open**, then confirm; or run `xattr -cr "/Applications/Claude Live Screen.app"`.
+> **These builds are unsigned**, because code-signing certificates cost more than this project earns. Each OS warns once on first launch:
+> - **Windows** — SmartScreen "Windows protected your PC" → **More info → Run anyway**
+> - **macOS** — "developer cannot be verified" → **right-click the app → Open**, or `xattr -cr "/Applications/Claude Live Screen.app"`
 >
-> Building from source (below) avoids the warnings entirely.
+> Use option 1 or build from source to avoid this entirely.
+
+Either way you'll need an [Anthropic API key](https://platform.claude.com/). To use a Claude subscription you already pay for instead, see the [Claude Code skill](https://github.com/jadstrike/claude-screen-skill).
 
 ## The master switch
 
